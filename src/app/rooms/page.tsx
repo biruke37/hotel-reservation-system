@@ -28,7 +28,7 @@ interface Room {
 const ALL_ROOMS: Room[] = [
     {
         id: "1",
-        title: "Presidential Luxury Suite",
+        title: "Presidential  Suite",
         type: "Deluxe Suite",
         price: 350,
         rating: 4.9,
@@ -93,7 +93,6 @@ const ALL_ROOMS: Room[] = [
         amenities: ["Free Wi-Fi", "Free Breakfast", "Balcony", "Ocean View", "Mini Bar", "Air Conditioning"],
     },
 ];
-
 const ALL_AMENITIES = ["Free Wi-Fi", "Free Breakfast", "Balcony", "Ocean View", "Mini Bar", "Air Conditioning"];
 const ROOM_TYPES = ["All Types", "Deluxe Suite", "Executive", "Standard Room", "Penthouse"];
 
@@ -127,21 +126,16 @@ export default function RoomsPage() {
             const title = room.title?.toLowerCase() || '';
             const description = room.description?.toLowerCase() || '';
             const query = searchQuery?.toLowerCase() || '';
-
             // Search Query Filter
             const matchesSearch = title.includes(query) || description.includes(query);
-
             // Type Filter
             const matchesType = selectedType === "All Types" || room.type === selectedType;
-
             // Price Filter
             const matchesPrice = room.price <= maxPrice;
-
             // Amenity Filter
             const matchesAmenities = selectedAmenities.every((amenity) =>
                 room.amenities?.includes(amenity)
             );
-
             return matchesSearch && matchesType && matchesPrice && matchesAmenities;
         }).sort((a, b) => {
             if (sortBy === "price-low") return a.price - b.price;
@@ -150,7 +144,6 @@ export default function RoomsPage() {
             return 0; // Default featured
         });
     }, [searchQuery, selectedType, maxPrice, selectedAmenities, sortBy]);
-
     return (
         <div className="min-h-screen bg-[#070b14] text-slate-100 font-sans pb-24">
 

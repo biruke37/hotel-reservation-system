@@ -206,6 +206,7 @@ export default function RegisterPage() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
+        gender: "",
         password: "",
         confirmPassword: "",
     });
@@ -378,7 +379,21 @@ export default function RegisterPage() {
                                 />
                             </div>
                         </div>
+                        <div>
+                            <label htmlFor="gender" className="block text-xs font-semibold text-slate-700 mb-1">Gender</label>
+                            <div className="relative">
 
+                                <select
+                                    className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-hotel-gold-500 focus:ring-1 focus:ring-hotel-gold-500 transition"
+                                >
+                                    <option value="select gender">Select your Gender:</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+
+                                </select>
+                            </div>
+                        </div>
                         {/* Password */}
                         <div>
                             <label htmlFor="password" className="block text-xs font-semibold text-slate-700 mb-1">Password</label>
@@ -442,7 +457,7 @@ export default function RegisterPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-[#c9952e] hover:bg-[#b07a24] text-white font-semibold py-2.5 rounded-lg text-xs shadow-md transition mt-2 disabled:opacity-70 flex items-center justify-center gap-2"
+                            className=" font-bold w-full bg-[#c9952e] hover:bg-[#b07a24] text-white font-semibold py-2.5 rounded-lg text-xs shadow-md transition mt-2 disabled:opacity-70 flex items-center justify-center gap-2"
                         >
                             {isLoading ? (
                                 <>
@@ -463,7 +478,7 @@ export default function RegisterPage() {
                             Already a member?{" "}
                             <Link
                                 href="/login"
-                                className="font-semibold text-hotel-gold-600 transition-colors hover:text-hotel-gold-700"
+                                className="font-bold text-hotel-gold-600 transition-colors hover:text-hotel-gold-700"
                             >
                                 Sign in to your account
                             </Link>
@@ -471,8 +486,8 @@ export default function RegisterPage() {
                     </div>
 
                 </div>
-            </div>
+            </div >
 
-        </div>
+        </div >
     );
 }

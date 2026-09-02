@@ -29,7 +29,7 @@ export default function CheckoutPage({ params }: CheckoutProps) {
     const [paymentMethod, setPaymentMethod] = useState("telebirr"); // telebirr, cbe, chapa
 
     const [bookingDetails, setBookingDetails] = useState({
-        roomType: "Luxury Suite",
+        roomType: "single",
         roomNumber: "101",
         checkInDate: "2026-09-10",
         checkOutDate: "2026-09-13",
@@ -68,7 +68,7 @@ export default function CheckoutPage({ params }: CheckoutProps) {
                 if (res.ok) {
                     const data = await res.json();
                     setBookingDetails({
-                        roomType: data.room?.type || "Luxury Suite",
+                        roomType: data.room?.type || "single",
                         roomNumber: data.room?.roomNumber || "101",
                         checkInDate: data.checkInDate ? data.checkInDate.split("T")[0] : "2026-09-10",
                         checkOutDate: data.checkOutDate ? data.checkOutDate.split("T")[0] : "2026-09-13",

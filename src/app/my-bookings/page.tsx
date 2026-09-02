@@ -107,7 +107,7 @@ function BookingsContent() {
 
                     const newBooking: Booking = {
                         id: verifiedId,
-                        roomTitle: "Presidential Luxury Suite",
+                        roomTitle: "Presidential  Suite",
                         roomType: "Deluxe Suite",
                         imageUrl: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=1000",
                         checkIn: "2026-10-01",
@@ -126,7 +126,6 @@ function BookingsContent() {
                 sessionStorage.setItem(verifiedKey, "true");
             }
         }
-
         verifyUserPayment();
     }, [isPaymentSuccess, tx_ref]);
     // ለውጦችን በ LocalStorage ማስቀመጥ

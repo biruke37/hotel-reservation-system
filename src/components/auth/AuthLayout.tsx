@@ -9,7 +9,6 @@ interface AuthLayoutProps {
   title: string;
   subtitle: string;
 }
-
 export default function AuthLayout({
   children,
   variant = "login",
@@ -17,7 +16,6 @@ export default function AuthLayout({
   subtitle,
 }: AuthLayoutProps) {
   const isLogin = variant === "login";
-
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
       {/* Left Branding Panel */}

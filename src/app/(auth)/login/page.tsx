@@ -66,7 +66,6 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-[calc(100vh-64px)] w-full grid grid-cols-1 lg:grid-cols-2 font-sans bg-[#080d1a]">
       {/* Left Side: Dark Plus Grid Panel */}
@@ -92,20 +91,17 @@ export default function LoginPage() {
             <p className="text-[10px] font-semibold text-[#c59a5b] tracking-widest uppercase">LUXURY RESERVATIONS</p>
           </div>
         </div>
-
         {/* Hero Content */}
         <div className="relative z-10 max-w-md my-auto py-12">
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
+          <h2 className="text-4xl lg:text-5xl font-display font-bold text-white leading-tight mb-6">
             Welcome Back to Refined Hotelly
           </h2>
           <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
             Sign in to manage your reservations, view upcoming stays, and enjoy a seamless booking experience.
           </p>
         </div>
-
         {/* Footer */}
       </div>
-
       {/* Right Side: Off-White Background & Login Card */}
       <div className="bg-[#f8f7f4] p-6 sm:p-12 flex items-center justify-center">
         <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100">
@@ -113,9 +109,7 @@ export default function LoginPage() {
             <h3 className="font-serif text-2xl font-bold text-gray-900 mb-1.5">
               Welcome
             </h3>
-
           </div>
-
           {error && (
             <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-100 text-xs text-red-600 flex items-center gap-2">
               <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -124,14 +118,17 @@ export default function LoginPage() {
               <span>{error}</span>
             </div>
           )}
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1.5">
                 Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0
+                 left-0 pl-3.5 
+                flex items-center 
+                pointer-events-none 
+                text-gray-400">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                   </svg>
@@ -197,7 +194,6 @@ export default function LoginPage() {
               {isLoading ? "Signing in..." : "Sign In"}
             </button>
           </form>
-
           <div className="mt-6 pt-4 border-t border-gray-100 text-center">
             <p className="text-xs text-gray-500">
               Don&apos;t have an account?{" "}

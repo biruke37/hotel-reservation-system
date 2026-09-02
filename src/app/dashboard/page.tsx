@@ -279,7 +279,6 @@
 //     );
 // }
 "use client";
-
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -535,7 +534,7 @@ export default function UserDashboard() {
                                     {filteredBookings.map((booking) => (
                                         <tr key={booking.id} className="hover:bg-[#131b2e]/40 transition-colors">
                                             <td className="px-6 py-4">
-                                                <div className="font-bold text-white">{booking.room?.type || "Luxury Suite"}</div>
+                                                <div className="font-bold text-white">{booking.room?.type || "Luxury "}</div>
                                                 <div className="text-[11px] text-slate-400 mt-0.5">Room #{booking.room?.roomNumber || "Standard"}</div>
                                             </td>
 
