@@ -185,7 +185,6 @@ export default function LoginPage() {
                 Remember me on this device
               </label>
             </div>
-
             <button
               type="submit"
               disabled={isLoading}

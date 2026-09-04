@@ -1,27 +1,10 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
-enum Role {
-  user
-  guest
-  admin
-}
-
-enum BookingStatus {
-  Pending
-  Confirmed
-  Cancelled
-  CheckedIn
-  CheckedOut
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -29,9 +12,10 @@ model User {
   name      String
   email     String    @unique
   password  String?
-  role      Role      @default(guest)
+  role      String    @default("guest")
   createdAt DateTime  @default(now())
   bookings  Booking[]
+  gender    String
 }
 
 model Room {
@@ -40,22 +24,22 @@ model Room {
   type          String
   pricePerNight Float
   description   String
-  images        String[]
-  amenities     String[]
+  images        String
+  amenities     String
   isAvailable   Boolean   @default(true)
   createdAt     DateTime  @default(now())
   bookings      Booking[]
 }
 
 model Booking {
-  id           String        @id @default(cuid())
+  id           String   @id @default(cuid())
   userId       String
   roomId       String
   checkInDate  DateTime
   checkOutDate DateTime
   totalPrice   Float
-  status       BookingStatus @default(Pending)
-  createdAt    DateTime      @default(now())
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  room         Room          @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  status       String   @default("Pending")
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room         Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }

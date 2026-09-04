@@ -7,7 +7,8 @@ export const runtime = "nodejs";
 
 export async function POST(req: Request) {
     try {
-        const { name, email, password } = await req.json();
+        // gender የሚለውን እዚህ ጋር ጨምረን ተቀበልን
+        const { name, email, password, gender } = await req.json();
 
         if (!name || !email || !password) {
             return NextResponse.json(
@@ -31,13 +32,14 @@ export async function POST(req: Request) {
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create new user
+        // Create new user (gender ን እዚህ ጋር ጨመርነው)
         const user = await prisma.user.create({
             data: {
                 name,
                 email,
                 password: hashedPassword,
                 role: "guest",
+                gender: gender || null, // ጂንደሩ ካለ ያስገባል፣ ከሌለ ግን null አድርጎ ይቀመጣል
             },
         });
 
