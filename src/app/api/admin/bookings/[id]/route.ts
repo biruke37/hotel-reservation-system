@@ -1,19 +1,34 @@
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-    try {
-        const { status } = await req.json();
+import { PrismaClient } from "@prisma/client";
 
-        const booking = await prisma.booking.update({
-            where: { id: params.id },
-            data: { status }, // Confirmed | Cancelled | CheckedIn | CheckedOut
+const prisma = new PrismaClient();
+
+export async function GET(
+    req: Request,
+    { params }: { params: { id: string } }
+) {
+    try {
+        const bookingId = params.id;
+
+        const booking = await prisma.booking.findUnique({
+            where: { id: bookingId },
         });
 
-        return NextResponse.json(booking);
+        if (!booking) {
+            return NextResponse.json(
+                { success: false, message: "ቦኪንግ አልተገኘም" },
+                { status: 404 }
+            );
+        }
+
+        return NextResponse.json({
+            success: true,
+            booking,
+        });
     } catch (error) {
-        return NextResponse.json({ error: "Failed to update booking status" }, { status: 500 });
+        return NextResponse.json(
+            { success: false, message: "መረጃውን ማምጣት አልተቻለም" },
+            { status: 500 }
+        );
     }
 }

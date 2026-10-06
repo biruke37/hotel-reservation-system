@@ -464,9 +464,9 @@ const supportLinks = [
 ];
 
 const contactInfo = [
-    { icon: Phone, label: "Phone", value: "+251 995 886 777" },
+    { icon: Phone, label: "Phone", value: "+251995877755" },
     { icon: Mail, label: "Email", value: "reserve@gmail.com" },
-    { icon: MapPin, label: "Address", value: "Addis Ababa, Ethiopia" },
+    { icon: MapPin, label: "Address", value: "Desse,Addis Ababa, Ethiopia" },
     { icon: Clock, label: "Front Desk", value: "Check-in 2 PM · Check-out 11 AM" },
 ];
 
@@ -506,7 +506,7 @@ export default function Footer() {
 
             {/* Content wrapper */}
             <div className="relative z-10">
-                
+
                 {/* ── Trust Badges Strip (Centered & Perfectly Balanced) ── */}
                 <div className="border-b border-white/10 bg-white/[0.02]">
                     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -529,7 +529,7 @@ export default function Footer() {
                 {/* ── Main Footer Body (Unboxed & Spaciously Organized) ── */}
                 <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
-                        
+
                         {/* Brand Info */}
                         <div className="lg:col-span-4 space-y-6">
                             <Link href="/" className="group inline-flex items-center gap-3">

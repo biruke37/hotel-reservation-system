@@ -23,10 +23,10 @@ export default function AdminSettingsPage() {
     // Form States
     const [generalSettings, setGeneralSettings] = useState({
         hotelName: "HotelHub Luxury",
-        contactEmail: "admin@hotelhub.com",
-        phone: "+251 911 000 111",
-        address: "Bole Road, Addis Ababa, Ethiopia",
-        currency: "USD",
+        contactEmail: "biru@gmail.com",
+        phone: "+251946309932",
+        address: "Desse , Addis Ababa, Woldia",
+        currency: "ETB",
     });
 
     const [bookingRules, setBookingRules] = useState({
@@ -80,8 +80,8 @@ export default function AdminSettingsPage() {
                 <button
                     onClick={() => setActiveTab("general")}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition ${activeTab === "general"
-                            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                            : "text-slate-400 hover:text-white bg-[#0d1322] border border-slate-800/80"
+                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+                        : "text-slate-400 hover:text-white bg-[#0d1322] border border-slate-800/80"
                         }`}
                 >
                     <Building2 className="w-4 h-4" />
@@ -90,8 +90,8 @@ export default function AdminSettingsPage() {
                 <button
                     onClick={() => setActiveTab("booking")}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition ${activeTab === "booking"
-                            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                            : "text-slate-400 hover:text-white bg-[#0d1322] border border-slate-800/80"
+                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+                        : "text-slate-400 hover:text-white bg-[#0d1322] border border-slate-800/80"
                         }`}
                 >
                     <Clock className="w-4 h-4" />
@@ -100,8 +100,8 @@ export default function AdminSettingsPage() {
                 <button
                     onClick={() => setActiveTab("notifications")}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition ${activeTab === "notifications"
-                            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                            : "text-slate-400 hover:text-white bg-[#0d1322] border border-slate-800/80"
+                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+                        : "text-slate-400 hover:text-white bg-[#0d1322] border border-slate-800/80"
                         }`}
                 >
                     <Bell className="w-4 h-4" />
@@ -110,8 +110,8 @@ export default function AdminSettingsPage() {
                 <button
                     onClick={() => setActiveTab("security")}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition ${activeTab === "security"
-                            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                            : "text-slate-400 hover:text-white bg-[#0d1322] border border-slate-800/80"
+                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+                        : "text-slate-400 hover:text-white bg-[#0d1322] border border-slate-800/80"
                         }`}
                 >
                     <ShieldCheck className="w-4 h-4" />
@@ -185,8 +185,8 @@ export default function AdminSettingsPage() {
                                         }
                                         className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition"
                                     >
-                                        <option value="USD">USD ($)</option>
                                         <option value="ETB">ETB (Br)</option>
+                                        <option value="USD">USD ($)</option>
                                         <option value="EUR">EUR (€)</option>
                                     </select>
                                 </div>

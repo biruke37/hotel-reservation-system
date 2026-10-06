@@ -296,14 +296,12 @@ import {
     CreditCard,
     Filter
 } from "lucide-react";
-
 interface Room {
     id: string;
     roomNumber: string;
     type: string;
     pricePerNight: number;
 }
-
 interface Booking {
     id: string;
     roomId: string;
@@ -316,7 +314,7 @@ interface Booking {
 
 export default function UserDashboard() {
     const { data: session, status: sessionStatus } = useSession();
-    const router = useRouter();
+    const router = useRouter(); 
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
     const [actionId, setActionId] = useState<string | null>(null);
