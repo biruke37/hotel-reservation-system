@@ -46,9 +46,9 @@ model Room {
   roomNumber    String    @unique
   type          String
   pricePerNight Float
-  title         String
+  title         String? // ? መጨመር
   description   String
-  category      String
+  category      String? // ? መጨመር
   images        String[]
   amenities     String
   isAvailable   Boolean   @default(true)

@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
         if (!bookingId || !transactionId || !receiptFile) {
             return NextResponse.json(
-                { success: false, message: "ሁሉም መረጃዎች አልተሟሉም።" },
+                { success: false, message: "no full data።" },
                 { status: 400 }
             );
         }
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
         if (existingPayment) {
             return NextResponse.json(
-                { success: false, message: "ይህ የትራንዛክሽን ቁጥር ቀደም ሲል ተመዝግቧል።" },
+                { success: false, message: "this receipt after seccess።" },
                 { status: 400 }
             );
         }
@@ -60,14 +60,14 @@ export async function POST(req: Request) {
 
         return NextResponse.json({
             success: true,
-            message: "ክፍያው በተሳካ ሁኔታ ተልኳል!",
+            message: "payment successfully!",
             payment,
         });
 
     } catch (error) {
         console.error("Payment save error:", error);
         return NextResponse.json(
-            { success: false, message: "የሰርቨር ስህተት አጋጥሟል።" },
+            { success: false, message: "server error።" },
             { status: 500 }
         );
     }

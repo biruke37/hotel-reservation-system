@@ -291,7 +291,7 @@ export default function LoginPage() {
       const session = await sessionRes.json();
 
       // 2. Admin ከሆነ ወደ Admin Dashboard፣ ካልሆነ ወደ Home መምራት
-      if (session?.user?.role === "admin") {
+      if (session?.user?.role === "ADMIN") {
         router.push("/admin");
       } else {
         router.push("/");
