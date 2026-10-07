@@ -1,511 +1,268 @@
-// "use client";
-
-// import { useState } from "react";
-// import {
-//     CreditCard,
-//     Search,
-//     Download,
-//     DollarSign,
-//     Clock,
-//     XCircle,
-//     Sparkles,
-//     Plus,
-//     X,
-//     FileText
-// } from "lucide-react";
-
-// interface Payment {
-//     id: string;
-//     transactionId: string;
-//     guestName: string;
-//     room: string;
-//     amount: string;
-//     method: "Chapa" | "Telebirr" | "Credit Card" | "Cash"| "CBE";
-//     status: "COMPLETED" | "PENDING" | "REFUNDED";
-//     date: string;
-// }
-
-// const initialPayments: Payment[] = [
-//     {
-//         id: "1",
-//         transactionId: "TXN-88421",
-//         guestName: "Abebe Kebede",
-//         room: "301 (Deluxe Suite)",
-//         amount: "450.00",
-//         method: "Chapa",
-//         status: "COMPLETED",
-//         date: "Aug 18, 2026 - 10:30 AM",
-//     },
-//     {
-//         id: "2",
-//         transactionId: "TXN-88422",
-//         guestName: "Sara Tadesse",
-//         room: "204 (Executive)",
-//         amount: "280.00",
-//         method: "Telebirr",
-//         status: "PENDING",
-//         date: "Aug 19, 2026 - 08:15 AM",
-//     },
-// ];
-
-// export default function AdminPaymentsPage() {
-//     const [payments, setPayments] = useState<Payment[]>(initialPayments);
-//     const [search, setSearch] = useState("");
-//     const [statusFilter, setStatusFilter] = useState("ALL");
-//     const [isModalOpen, setIsModalOpen] = useState(false);
-
-//     // New Payment Form State
-//     const [newPayment, setNewPayment] = useState({
-//         guestName: "",
-//         room: "",
-//         amount: "",
-//         method: "Cash" as Payment["method"],
-//         status: "COMPLETED" as Payment["status"],
-//     });
-
-//     // Handle Adding Manual Payment
-//     const handleAddPayment = (e: React.FormEvent) => {
-//         e.preventDefault();
-//         const created: Payment = {
-//             id: Date.now().toString(),
-//             transactionId: `TXN-MANUAL-${Math.floor(1000 + Math.random() * 9000)}`,
-//             guestName: newPayment.guestName,
-//             room: newPayment.room,
-//             amount: parseFloat(newPayment.amount).toFixed(2),
-//             method: newPayment.method,
-//             status: newPayment.status,
-//             date: new Date().toLocaleDateString("en-US", {
-//                 month: "short",
-//                 day: "numeric",
-//                 year: "numeric",
-//             }) + " - " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-//         };
-
-//         setPayments([created, ...payments]);
-//         setIsModalOpen(false);
-//         setNewPayment({ guestName: "", room: "", amount: "", method: "Cash", status: "COMPLETED" });
-//     };
-
-//     const filteredPayments = payments.filter((payment) => {
-//         const matchesSearch =
-//             payment.guestName.toLowerCase().includes(search.toLowerCase()) ||
-//             payment.transactionId.toLowerCase().includes(search.toLowerCase()) ||
-//             payment.method.toLowerCase().includes(search.toLowerCase());
-//         const matchesStatus =
-//             statusFilter === "ALL" || payment.status === statusFilter;
-//         return matchesSearch && matchesStatus;
-//     });
-
-//     return (
-//         <div className="space-y-6">
-//             {/* Top Banner */}
-//             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#0d1322] border border-slate-800/80 p-6 rounded-2xl shadow-xl">
-//                 <div>
-//                     <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs mb-1">
-//                         <Sparkles className="w-4 h-4" />
-//                         <span>Financial Transactions</span>
-//                     </div>
-//                     <h1 className="text-xl font-black text-white tracking-wide">
-//                         Payments & Transactions
-//                     </h1>
-//                     <p className="text-xs text-slate-400 mt-1">
-//                         Online and Physically (Manual/Cash) payments this manage and register::
-//                     </p>
-//                 </div>
-
-//                 <div className="flex items-center gap-3">
-//                     <button
-//                         onClick={() => setIsModalOpen(true)}
-//                         className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition active:scale-95 shrink-0"
-//                     >
-//                         <Plus className="w-4 h-4" />
-//                         <span>Record Payment</span>
-//                     </button>
-//                     <button
-//                         onClick={() => alert("payment report download!")}
-//                         className="flex items-center justify-center gap-2 bg-[#131b2e] hover:bg-slate-800 text-slate-300 border border-slate-800/80 px-4 py-2.5 rounded-xl text-xs font-bold transition shrink-0"
-//                     >
-//                         <Download className="w-4 h-4" />
-//                         <span>Export</span>
-//                     </button>
-//                 </div>
-//             </div>
-//             {/* Stats Cards */}
-//             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-//                 <div className="bg-[#0d1322] border border-slate-800/80 rounded-2xl p-5 flex items-center justify-between">
-//                     <div>
-//                         <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Revenue</p>
-//                         <h3 className="text-2xl font-black text-emerald-400 mt-1">
-//                             ${payments.reduce((sum, p) => p.status === "COMPLETED" ? sum + parseFloat(p.amount) : sum, 0).toFixed(2)}
-//                         </h3>
-//                     </div>
-//                     <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
-//                         <DollarSign className="w-5 h-5" />
-//                     </div>
-//                 </div>
-
-//                 <div className="bg-[#0d1322] border border-slate-800/80 rounded-2xl p-5 flex items-center justify-between">
-//                     <div>
-//                         <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pending</p>
-//                         <h3 className="text-2xl font-black text-amber-400 mt-1">
-//                             ${payments.reduce((sum, p) => p.status === "PENDING" ? sum + parseFloat(p.amount) : sum, 0).toFixed(2)}
-//                         </h3>
-//                     </div>
-//                     <div className="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
-//                         <Clock className="w-5 h-5" />
-//                     </div>
-//                 </div>
-
-//                 <div className="bg-[#0d1322] border border-slate-800/80 rounded-2xl p-5 flex items-center justify-between">
-//                     <div>
-//                         <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Transactions</p>
-//                         <h3 className="text-2xl font-black text-indigo-400 mt-1">{payments.length}</h3>
-//                     </div>
-//                     <div className="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
-//                         <CreditCard className="w-5 h-5" />
-//                     </div>
-//                 </div>
-//             </div>
-
-//             {/* Search and Filters */}
-//             <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-[#0d1322] border border-slate-800/80 p-4 rounded-2xl">
-//                 <div className="relative w-full md:w-80">
-//                     <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-//                     <input
-//                         type="text"
-//                         placeholder="Search guest, TXN ID or method..."
-//                         value={search}
-//                         onChange={(e) => setSearch(e.target.value)}
-//                         className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition"
-//                     />
-//                 </div>
-
-//                 <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto">
-//                     {["ALL", "COMPLETED", "PENDING", "REFUNDED"].map((st) => (
-//                         <button
-//                             key={st}
-//                             onClick={() => setStatusFilter(st)}
-//                             className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${statusFilter === st
-//                                 ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
-//                                 : "bg-[#131b2e] text-slate-400 hover:text-white border border-slate-800/80"
-//                                 }`}
-//                         >
-//                             {st}
-//                         </button>
-//                     ))}
-//                 </div>
-//             </div>
-
-//             {/* Table */}
-//             <div className="bg-[#0d1322] border border-slate-800/80 rounded-2xl overflow-hidden shadow-xl">
-//                 <div className="overflow-x-auto">
-//                     <table className="w-full text-left border-collapse">
-//                         <thead>
-//                             <tr className="border-b border-slate-800/80 bg-[#111827]/50 text-[11px] uppercase tracking-wider text-slate-400">
-//                                 <th className="py-4 px-6 font-semibold">Transaction ID</th>
-//                                 <th className="py-4 px-6 font-semibold">Guest & Room</th>
-//                                 <th className="py-4 px-6 font-semibold">Amount</th>
-//                                 <th className="py-4 px-6 font-semibold">Payment Method</th>
-//                                 <th className="py-4 px-6 font-semibold">Date & Time</th>
-//                                 <th className="py-4 px-6 font-semibold">Status</th>
-//                             </tr>
-//                         </thead>
-//                         <tbody className="divide-y divide-slate-800/60 text-xs">
-//                             {filteredPayments.map((item) => (
-//                                 <tr key={item.id} className="hover:bg-slate-800/30 transition">
-//                                     <td className="py-4 px-6 font-mono font-bold text-indigo-400">
-//                                         {item.transactionId}
-//                                     </td>
-//                                     <td className="py-4 px-6">
-//                                         <p className="font-bold text-white">{item.guestName}</p>
-//                                         <p className="text-[11px] text-slate-400 mt-0.5">{item.room}</p>
-//                                     </td>
-//                                     <td className="py-4 px-6 font-black text-white text-sm">
-//                                         ${item.amount}
-//                                     </td>
-//                                     <td className="py-4 px-6">
-//                                         <span className="px-2.5 py-1 rounded-lg bg-[#131b2e] border border-slate-800/80 text-slate-300 font-semibold text-[11px]">
-//                                             {item.method}
-//                                         </span>
-//                                     </td>
-//                                     <td className="py-4 px-6 text-slate-400 text-[11px]">
-//                                         {item.date}
-//                                     </td>
-//                                     <td className="py-4 px-6">
-//                                         <span
-//                                             className={`px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider ${item.status === "COMPLETED"
-//                                                 ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-//                                                 : item.status === "PENDING"
-//                                                     ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-//                                                     : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-//                                                 }`}
-//                                         >
-//                                             {item.status}
-//                                         </span>
-//                                     </td>
-//                                 </tr>
-//                             ))}
-//                         </tbody>
-//                     </table>
-//                 </div>
-//             </div>
-
-//             {/* Modal for Manual Payment Entry */}
-//             {isModalOpen && (
-//                 <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-//                     <div className="bg-[#0d1322] border border-slate-800 w-full max-w-md rounded-2xl p-6 space-y-4 shadow-2xl relative">
-//                         <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-//                             <h3 className="text-sm font-bold text-white">Record Manual Payment</h3>
-//                             <button
-//                                 onClick={() => setIsModalOpen(false)}
-//                                 className="text-slate-400 hover:text-white transition"
-//                             >
-//                                 <X className="w-5 h-5" />
-//                             </button>
-//                         </div>
-
-//                         <form onSubmit={handleAddPayment} className="space-y-4 text-xs">
-//                             <div className="space-y-1">
-//                                 <label className="text-slate-300 font-semibold">Guest Name</label>
-//                                 <input
-//                                     type="text"
-//                                     required
-//                                     placeholder="e.g. Alamu Bekele"
-//                                     value={newPayment.guestName}
-//                                     onChange={(e) => setNewPayment({ ...newPayment, guestName: e.target.value })}
-//                                     className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-indigo-500"
-//                                 />
-//                             </div>
-
-//                             <div className="space-y-1">
-//                                 <label className="text-slate-300 font-semibold">Room No / Type</label>
-//                                 <input
-//                                     type="text"
-//                                     required
-//                                     placeholder="e.g. 102 (Standard)"
-//                                     value={newPayment.room}
-//                                     onChange={(e) => setNewPayment({ ...newPayment, room: e.target.value })}
-//                                     className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-indigo-500"
-//                                 />
-//                             </div>
-
-//                             <div className="grid grid-cols-2 gap-3">
-//                                 <div className="space-y-1">
-//                                     <label className="text-slate-300 font-semibold">Amount ($)</label>
-//                                     <input
-//                                         type="number"
-//                                         required
-//                                         placeholder="250.00"
-//                                         value={newPayment.amount}
-//                                         onChange={(e) => setNewPayment({ ...newPayment, amount: e.target.value })}
-//                                         className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-indigo-500"
-//                                     />
-//                                 </div>
-
-//                                 <div className="space-y-1">
-//                                     <label className="text-slate-300 font-semibold">Method</label>
-//                                     <select
-//                                         value={newPayment.method}
-//                                         onChange={(e) => setNewPayment({ ...newPayment, method: e.target.value as any })}
-//                                         className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-indigo-500"
-//                                     > 
-//                                         <option value="Cbe">CBE</option>
-//                                         <option value="Cash">Cash</option>
-//                                         <option value="Telebirr">Telebirr</option>
-//                                         <option value="Chapa">Chapa</option>
-//                                         <option value="Credit Card">Credit Card</option>
-//                                     </select>
-//                                 </div>
-//                             </div>
-
-//                             <div className="pt-2 flex items-center justify-end gap-2">
-//                                 <button
-//                                     type="button"
-//                                     onClick={() => setIsModalOpen(false)}
-//                                     className="px-4 py-2 rounded-xl text-slate-400 hover:text-white transition"
-//                                 >
-//                                     Cancel
-//                                 </button>
-//                                 <button
-//                                     type="submit"
-//                                     className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-xl font-bold shadow-lg shadow-indigo-600/30 transition"
-//                                 >
-//                                     Save Transaction
-//                                 </button>
-//                             </div>
-//                         </form>
-//                     </div>
-//                 </div>
-//             )}
-//         </div>
-//     );
-// }
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Loader2, CheckCircle2, XCircle, Clock, CreditCard } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import {
+  ShieldCheck,
+  CheckCircle,
+  Upload,
+  Lock,
+  ArrowRight,
+  CreditCard,
+  Smartphone
+} from "lucide-react";
+import { toast } from "sonner";
 
-export default function AdminPaymentsPage() {
-  const [payments, setPayments] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState("ALL"); // ALL, PENDING_VERIFICATION, CONFIRMED, REJECTED
+export default function ModernPaymentPage() {
+  const searchParams = useSearchParams();
 
-  // Fetch bookings/payments from API
-  const fetchPayments = async () => {
+  const nights = searchParams.get("nights") || "1";
+  const totalPrice = searchParams.get("total") || "0";
+
+  const [selectedMethod, setSelectedMethod] = useState<"telebirr" | "cbe">("telebirr");
+  const [transactionId, setTransactionId] = useState("");
+  const [receiptImage, setReceiptImage] = useState<File | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const trimmedId = transactionId.trim();
+
+    // 1. Validate Transaction ID
+    if (!trimmedId) {
+      toast.error("Please enter a valid Transaction ID / FT Number!");
+      return;
+    }
+
+    // 2. Validate Receipt Image
+    if (!receiptImage) {
+      toast.error("Please upload the payment receipt screenshot!");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      const res = await fetch("/api/admin/payments");
-      const data = await res.json();
-      if (data.success) {
-        setPayments(data.payments);
-      }
+      const formData = new FormData();
+      formData.append("transactionId", trimmedId);
+      formData.append("paymentMethod", selectedMethod);
+      formData.append("receipt", receiptImage);
+      formData.append("total", totalPrice);
+
+      // Example API call
+      // const res = await fetch('/api/payments/submit', { method: 'POST', body: formData });
+      // if (!res.ok) throw new Error("Failed to submit payment");
+
+      // Simulation delay
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      setLoading(false);
+      setIsSubmitted(true);
+      toast.success("Payment verification submitted successfully!");
     } catch (error) {
-      console.error("Failed to fetch payments:", error);
-    } finally {
-      setIsLoading(false);
+      setLoading(false);
+      toast.error("An error occurred. Please try again.");
     }
   };
 
-  useEffect(() => {
-    fetchPayments();
-  }, []);
-
-  // Handle Approve / Reject action
-  const handleAction = async (bookingId: string, action: "APPROVE" | "REJECT") => {
-    try {
-      const res = await fetch(`/api/admin/payments/${bookingId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        // Refresh the list
-        fetchPayments();
-      } else {
-        alert(data.message);
-      }
-    } catch (error) {
-      console.error("Action error:", error);
-    }
-  };
-
-  // Filter payments based on tabs
-  const filteredPayments = payments.filter((item) => {
-    if (filter === "ALL") return true;
-    return item.status === filter;
-  });
-
-  if (isLoading) {
+  if (isSubmitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#080d1a]">
-        <Loader2 className="w-8 h-8 animate-spin text-[#c59a5b]" />
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-md w-full bg-slate-900/80 border border-slate-800 rounded-3xl p-8 backdrop-blur-xl shadow-2xl space-y-6">
+          <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mx-auto">
+            <CheckCircle className="w-10 h-10 text-emerald-400 animate-pulse" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-extrabold tracking-tight">Payment Received!</h1>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Your transaction ID and receipt have been securely logged. Your hotel booking will be verified and approved shortly.
+            </p>
+          </div>
+          <button
+            onClick={() => window.location.href = "/"}
+            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-2xl text-xs transition shadow-lg shadow-indigo-600/30 cursor-pointer"
+          >
+            Back to Home
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-8 bg-[#080d1a] min-h-screen text-white font-sans">
-      <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-serif font-bold">Payments & Transactions</h1>
-          <p className="text-sm text-gray-400">Manage manual bank transfers (CBE & Telebirr) and approvals.</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 font-sans py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+      <div className="max-w-xl w-full space-y-6">
+
+        {/* Top Header Card */}
+        <div className="bg-slate-900/70 border border-slate-800/80 rounded-3xl p-6 backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xl">
+          <div>
+            <h1 className="text-base font-extrabold tracking-tight text-white flex items-center gap-2">
+              <Lock className="w-4 h-4 text-indigo-400" /> Secure Payment Checkout
+            </h1>
+            <p className="text-xs text-slate-400 mt-1">
+              Stay Duration: <span className="text-indigo-400 font-bold">{nights} Night(s)</span>
+            </p>
+          </div>
+
+          <div className="bg-slate-950/80 border border-slate-800 px-4 py-2.5 rounded-2xl text-right">
+            <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Amount</span>
+            <span className="text-lg font-black text-emerald-400">{Number(totalPrice).toLocaleString()} ETB</span>
+          </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex gap-3 border-b border-gray-800 pb-4">
-          {["ALL", "PENDING_VERIFICATION", "CONFIRMED", "REJECTED"].map((tab) => (
+        {/* Main Content Card */}
+        <div className="bg-slate-900/80 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-2xl shadow-2xl space-y-6">
+
+          {/* Payment Method Selector */}
+          <div className="space-y-3">
+            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              Select Payment Method
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+
+              {/* Telebirr Button */}
+              <button
+                type="button"
+                onClick={() => setSelectedMethod("telebirr")}
+                className={`flex items-center gap-3 p-4 rounded-2xl border transition-all duration-300 text-left cursor-pointer ${selectedMethod === "telebirr"
+                    ? "bg-gradient-to-r from-emerald-600/20 to-teal-600/10 border-emerald-500 text-white shadow-lg shadow-emerald-600/10 scale-[1.02]"
+                    : "bg-slate-950/40 border-slate-800/80 text-slate-400 hover:border-slate-700"
+                  }`}
+              >
+                <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${selectedMethod === "telebirr" ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-300" : "bg-slate-900 border-slate-800 text-slate-400"
+                  }`}>
+                  <Smartphone className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Telebirr</div>
+                  <div className="text-[10px] text-emerald-400 font-medium">Merchant / Send Money</div>
+                </div>
+              </button>
+
+              {/* CBE Button */}
+              <button
+                type="button"
+                onClick={() => setSelectedMethod("cbe")}
+                className={`flex items-center gap-3 p-4 rounded-2xl border transition-all duration-300 text-left cursor-pointer ${selectedMethod === "cbe"
+                    ? "bg-gradient-to-r from-purple-600/20 to-indigo-600/10 border-purple-500 text-white shadow-lg shadow-purple-600/10 scale-[1.02]"
+                    : "bg-slate-950/40 border-slate-800/80 text-slate-400 hover:border-slate-700"
+                  }`}
+              >
+                <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${selectedMethod === "cbe" ? "bg-purple-500/20 border-purple-500/40 text-purple-300" : "bg-slate-900 border-slate-800 text-slate-400"
+                  }`}>
+                  <CreditCard className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">CBE Bank</div>
+                  <div className="text-[10px] text-purple-400 font-medium">Commercial Bank</div>
+                </div>
+              </button>
+
+            </div>
+          </div>
+
+          {/* Account Details Box */}
+          <div className={`border rounded-2xl p-5 space-y-2 relative overflow-hidden transition-all duration-500 ${selectedMethod === "telebirr"
+              ? "bg-emerald-950/20 border-emerald-500/30 shadow-lg shadow-emerald-950/50"
+              : "bg-purple-950/20 border-purple-500/30 shadow-lg shadow-purple-950/50"
+            }`}>
+            <div className="flex justify-between items-center text-[11px] font-semibold uppercase tracking-wider">
+              <span className={selectedMethod === "telebirr" ? "text-emerald-400" : "text-purple-400"}>
+                {selectedMethod === "telebirr" ? "Telebirr Merchant Account" : "CBE Bank Account"}
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-900 text-slate-300 border border-slate-800">
+                Account Number
+              </span>
+            </div>
+
+            <div className="flex items-baseline justify-between pt-1">
+              <div>
+                <div className="text-2xl font-black text-white tracking-widest font-mono">
+                  {selectedMethod === "telebirr" ? "0946309932" : "1000123456789"}
+                </div>
+                <div className="text-[11px] text-slate-400 mt-0.5">
+                  Account Name: <span className="text-slate-200 font-semibold">Hotel Reservation System</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Form Section */}
+          <form onSubmit={handleSubmit} className="space-y-5">
+
+            {/* Transaction ID Input */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                <span>Transaction ID / FT Number <span className="text-rose-500">*</span></span>
+                <span className="text-[10px] text-indigo-400 normal-case">e.g., FTR9XYZ...</span>
+              </label>
+              <input
+                type="text"
+                value={transactionId}
+                onChange={(e) => setTransactionId(e.target.value)}
+                placeholder="Enter your bank or telebirr transaction reference number..."
+                className="w-full bg-slate-950/80 border border-slate-800 rounded-2xl p-4 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition shadow-inner uppercase tracking-wider font-mono"
+              />
+            </div>
+
+            {/* File Upload Box */}
+            <div>
+              <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                Receipt Screenshot <span className="text-rose-500">*</span>
+              </label>
+              <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 cursor-pointer transition-all group ${receiptImage ? "border-emerald-500/60 bg-emerald-500/5" : "border-slate-800 hover:border-indigo-500/50 bg-slate-950/40"
+                }`}>
+                <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all mb-2 ${receiptImage ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400" : "bg-slate-900 border-slate-800 text-slate-400 group-hover:text-indigo-400 group-hover:scale-110"
+                  }`}>
+                  <Upload className="w-5 h-5" />
+                </div>
+                <span className={`text-xs font-semibold ${receiptImage ? "text-emerald-300" : "text-slate-300"}`}>
+                  {receiptImage ? `✓ Attached: ${receiptImage.name}` : "Click to upload receipt or drag and drop file here"}
+                </span>
+                <span className="text-[10px] text-slate-500 mt-1">PNG, JPG up to 10MB</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setReceiptImage(e.target.files[0]);
+                      toast.success("Receipt attached successfully!");
+                    }
+                  }}
+                />
+              </label>
+            </div>
+
+            {/* Submit Button */}
             <button
-              key={tab}
-              onClick={() => setFilter(tab)}
-              className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
-                filter === tab
-                  ? "bg-[#c59a5b] text-black font-bold"
-                  : "bg-gray-900 text-gray-400 hover:bg-gray-800"
-              }`}
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-50 text-white font-bold py-4 rounded-2xl text-xs flex items-center justify-center gap-2 shadow-xl shadow-indigo-600/25 transition-all cursor-pointer active:scale-98"
             >
-              {tab.replace("_", " ")}
-            </button>
-          ))}
-        </div>
-
-        {/* Table */}
-        <div className="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden shadow-xl">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-gray-800 text-xs text-gray-400 uppercase bg-gray-900/80">
-                <th className="p-4">Transaction Ref</th>
-                <th className="p-4">Guest & Hotel</th>
-                <th className="p-4">Method</th>
-                <th className="p-4">Amount</th>
-                <th className="p-4">Status</th>
-                <th className="p-4 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-800 text-sm">
-              {filteredPayments.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="p-8 text-center text-gray-500">
-                    No transactions found.
-                  </td>
-                </tr>
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Submitting Payment...</span>
+                </div>
               ) : (
-                filteredPayments.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-900/40 transition-colors">
-                    <td className="p-4 font-mono text-[#c59a5b]">
-                      {item.transactionRef || "N/A"}
-                    </td>
-                    <td className="p-4">
-                      <div className="font-medium text-white">{item.hotelName}</div>
-                      <div className="text-xs text-gray-400">{item.roomType} • {item.nights} nights</div>
-                    </td>
-                    <td className="p-4 uppercase text-xs font-semibold text-gray-300">
-                      {item.paymentMethod || "N/A"}
-                    </td>
-                    <td className="p-4 font-bold text-white">
-                      {item.amount?.toLocaleString()} ETB
-                    </td>
-                    <td className="p-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          item.status === "CONFIRMED"
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                            : item.status === "REJECTED"
-                            ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                            : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="p-4 text-center">
-                      {item.status === "PENDING_VERIFICATION" ? (
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            onClick={() => handleAction(item.id, "APPROVE")}
-                            className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
-                          >
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Approve
-                          </button>
-                          <button
-                            onClick={() => handleAction(item.id, "REJECT")}
-                            className="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors"
-                          >
-                            <XCircle className="w-3.5 h-3.5" /> Reject
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-xs text-gray-500 italic">Processed</span>
-                      )}
-                    </td>
-                  </tr>
-                ))
+                <>
+                  <span>Submit Payment</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
               )}
-            </tbody>
-          </table>
-        </div>
+            </button>
+          </form>
 
+          {/* Security Banner */}
+          <div className="flex items-center gap-3 text-[11px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl">
+            <ShieldCheck className="w-5 h-5 shrink-0 text-emerald-400" />
+            <span>Secured encryption. Your booking will be confirmed immediately after transaction verification.</span>
+          </div>
+
+        </div>
       </div>
     </div>
   );

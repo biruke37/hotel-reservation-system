@@ -1,10 +1,10 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 enum Role {
@@ -34,17 +34,35 @@ model User {
   id        String    @id @default(cuid())
   name      String?
   email     String    @unique
+  password  String?
   role      Role      @default(CUSTOMER)
-  bookings  Booking[]
+  gender    String?
   createdAt DateTime  @default(now())
+  bookings  Booking[]
+}
+
+model Room {
+  id            String    @id @default(cuid())
+  roomNumber    String    @unique
+  type          String
+  pricePerNight Float
+  title         String
+  description   String
+  category      String
+  images        String[]
+  amenities     String
+  isAvailable   Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  bookings      Booking[]
 }
 
 model Booking {
   id        String        @id @default(cuid())
   userId    String
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  hotelName String
-  roomType  String
+  roomId    String
+  room      Room          @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  hotelName String        @default("Hotel")
   nights    Int           @default(1)
   amount    Float
   status    BookingStatus @default(PENDING_PAYMENT)

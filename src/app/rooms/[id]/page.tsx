@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -112,10 +113,7 @@ interface PageProps {
 }
 
 export default function RoomDetailPage({ params }: PageProps) {
-  // Next.js 14 ስለሆነ params-ን በቀጥታ እንጠቀማለን (Promise አይደለም)
   const roomId = params.id;
-
-  // Fetch Room Data based on ID
   const room = ROOMS_DATABASE[roomId];
 
   // States
@@ -147,6 +145,19 @@ export default function RoomDetailPage({ params }: PageProps) {
       </div>
     );
   }
+
+  // የሌሊት ብዛት እና ጠቅላላ ዋጋ ማስያ
+  const calculateNights = () => {
+    if (!checkInDate || !checkOutDate) return 1;
+    const start = new Date(checkInDate);
+    const end = new Date(checkOutDate);
+    const diffTime = end.getTime() - start.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 ? diffDays : 1;
+  };
+
+  const nights = calculateNights();
+  const totalPrice = nights * room.pricePerNight;
 
   const openLightbox = (index: number) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
@@ -387,8 +398,8 @@ export default function RoomDetailPage({ params }: PageProps) {
                       >
                         <Star
                           className={`w-5 h-5 ${star <= newRating
-                              ? "fill-amber-400 text-amber-400"
-                              : "text-slate-300 dark:text-slate-600"
+                            ? "fill-amber-400 text-amber-400"
+                            : "text-slate-300 dark:text-slate-600"
                             }`}
                         />
                       </button>
@@ -512,8 +523,9 @@ export default function RoomDetailPage({ params }: PageProps) {
                 </div>
               </div>
 
+              {/* እዚህ ጋር nights እና total ዋጋን ጨምረን ወደ ቼክአውት እንልካለን */}
               <Link
-                href={`/checkout/${room.id}?checkIn=${checkInDate}&checkOut=${checkOutDate}&guests=${guestsCount}`}
+                href={`/checkout/${room.id}?checkIn=${checkInDate}&checkOut=${checkOutDate}&guests=${guestsCount}&nights=${nights}&total=${totalPrice}`}
                 className="block w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl text-xs text-center shadow-lg shadow-indigo-600/30 transition cursor-pointer active:scale-95"
               >
                 Proceed to Checkout
