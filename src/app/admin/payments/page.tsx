@@ -269,6 +269,7 @@
 // }
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+export const dynamic = "force-dynamic";
 
 async function approveBooking(formData: FormData) {
   "use server";

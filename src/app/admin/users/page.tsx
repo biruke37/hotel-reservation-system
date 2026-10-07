@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
     // Fetch all registered users from the database, ordered by latest
