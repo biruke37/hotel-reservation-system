@@ -26,7 +26,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     try {
         const updatedBooking = await prisma.booking.update({
             where: { id: params.id },
-            data: { status: "Cancelled" },
+            data: { status: "REJECTED" },
         });
 
         return NextResponse.json(updatedBooking);

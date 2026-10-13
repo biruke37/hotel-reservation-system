@@ -12,7 +12,7 @@ async function main() {
             email: "admin@gmail.com",
             name: "Hotel Admin",
             password: hashedPassword,
-            role: Role.admin,
+            role: Role.ADMIN,
         },
     });
     // 2. Create Demo Room
@@ -25,9 +25,9 @@ async function main() {
             pricePerNight: 500,
             description: "Top tier luxury suite with breathtaking view",
             images: [
-                https://www.gettyimages.com/detail/photo/receptionist-working-at-hotel-desk-providing-royalty-free-image/2268419814?slot=1,
+                "https://www.gettyimages.com/detail/photo/receptionist-working-at-hotel-desk-providing-royalty-free-image/2268419814?slot=1",
             ],
-            amenities: ["WiFi", "Pool View", "King Bed", "Jacuzzi"],
+            amenities: "WiFi, Pool View, King Bed, Jacuzzi",
             isAvailable: true,
         },
     });

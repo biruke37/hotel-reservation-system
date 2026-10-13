@@ -3,17 +3,14 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import MainWrapper from "@/components/MainWrapper";
-
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
-
 export const metadata: Metadata = {
   title: "HotelHub — Luxury Hotel Reservations",
   description: "Book premium stays, manage reservations, and enjoy exclusive member benefits with HotelHub.",
 };
-
 export default function RootLayout({
   children,
 }: {

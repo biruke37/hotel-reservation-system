@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { Calendar, Clock, DollarSign, AlertCircle, CheckCircle2, User } from "lucide-react";
+
 export default function BookingForm({ roomId, pricePerNight }: { roomId: string; pricePerNight: number }) {
     const [checkIn, setCheckIn] = useState("");
     const [checkOut, setCheckOut] = useState("");
@@ -11,7 +13,7 @@ export default function BookingForm({ roomId, pricePerNight }: { roomId: string;
     const { data: session, status } = useSession();
     const router = useRouter();
 
-    // Calculate nights and total price dynamically (FR-1.3)
+    // Calculate nights and total price dynamically
     const nights = checkIn && checkOut ? Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 3600 * 24)) : 0;
     const totalPrice = nights > 0 ? (nights * pricePerNight).toFixed(2) : "0.00";
 
@@ -19,7 +21,7 @@ export default function BookingForm({ roomId, pricePerNight }: { roomId: string;
         e.preventDefault();
         setError("");
 
-        // FR-1.3: Must be authenticated to book
+        // Must be authenticated to book
         if (status === "unauthenticated") {
             router.push("/login?callbackUrl=/rooms/" + roomId);
             return;
@@ -44,8 +46,7 @@ export default function BookingForm({ roomId, pricePerNight }: { roomId: string;
             }
 
             const booking = await res.json();
-            // Redirect to user dashboard on success
-            router.push("/dashboard?success=true");
+            router.push("/my-bookings?success=true");
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -57,52 +58,128 @@ export default function BookingForm({ roomId, pricePerNight }: { roomId: string;
     const today = new Date().toISOString().split("T")[0];
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            {error && <div className="p-3 bg-red-50 text-red-600 text-sm rounded">{error}</div>}
-
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Check-in</label>
-                <input
-                    type="date"
-                    min={today}
-                    required
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-            </div>
-
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Check-out</label>
-                <input
-                    type="date"
-                    min={checkIn || today}
-                    required
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-            </div>
-
-            <div className="bg-gray-50 p-4 rounded-md">
-                <div className="flex justify-between text-sm text-gray-600">
-                    <span>${pricePerNight} x {nights} nights</span>
-                    <span>${totalPrice}</span>
+        <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Authentication Warning */}
+            {status === "unauthenticated" && (
+                <div className="flex items-start gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl text-sm">
+                    <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                        <p className="font-semibold text-amber-400">Authentication Required</p>
+                        <p className="text-xs text-slate-300">You need to sign in to complete your reservation</p>
+                    </div>
                 </div>
-                <div className="flex justify-between font-bold text-gray-900 mt-2 pt-2 border-t border-gray-200">
-                    <span>Total</span>
-                    <span>${totalPrice}</span>
+            )}
+
+            {/* Error Alert */}
+            {error && (
+                <div className="flex items-start gap-3 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-sm">
+                    <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+                    <div>
+                        <p className="font-semibold text-rose-400">Booking Error</p>
+                        <p className="text-xs text-slate-300 mt-1">{error}</p>
+                    </div>
+                </div>
+            )}
+
+            {/* Check-in Date */}
+            <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-white">
+                    <Calendar className="w-4 h-4 text-indigo-400" />
+                    Check-in Date
+                </label>
+                <div className="relative">
+                    <input
+                        type="date"
+                        min={today}
+                        required
+                        value={checkIn}
+                        onChange={(e) => setCheckIn(e.target.value)}
+                        className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                    />
                 </div>
             </div>
 
+            {/* Check-out Date */}
+            <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-white">
+                    <Calendar className="w-4 h-4 text-indigo-400" />
+                    Check-out Date
+                </label>
+                <div className="relative">
+                    <input
+                        type="date"
+                        min={checkIn || today}
+                        required
+                        value={checkOut}
+                        onChange={(e) => setCheckOut(e.target.value)}
+                        className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                    />
+                </div>
+            </div>
+
+            {/* Booking Summary */}
+            <div className="space-y-3 p-5 bg-gradient-to-br from-indigo-950/40 to-purple-950/40 border border-indigo-800/30 rounded-2xl">
+                <div className="flex items-center gap-2 pb-3 border-b border-indigo-800/30">
+                    <DollarSign className="w-4 h-4 text-indigo-400" />
+                    <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider">Booking Summary</span>
+                </div>
+
+                <div className="space-y-2.5 text-sm">
+                    <div className="flex justify-between items-center">
+                        <span className="text-slate-400 flex items-center gap-2">
+                            <Clock className="w-3.5 h-3.5 text-slate-500" />
+                            Duration
+                        </span>
+                        <span className="font-semibold text-white">
+                            {nights > 0 ? `${nights} ${nights === 1 ? 'night' : 'nights'}` : 'Select dates'}
+                        </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                        <span className="text-slate-400">Price per night</span>
+                        <span className="font-semibold text-white">${pricePerNight.toFixed(2)}</span>
+                    </div>
+
+                    {nights > 0 && (
+                        <div className="flex justify-between items-center pt-2 border-t border-indigo-800/30">
+                            <span className="text-slate-400">Subtotal</span>
+                            <span className="font-semibold text-slate-300">${(nights * pricePerNight).toFixed(2)}</span>
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex justify-between items-center pt-3 border-t-2 border-indigo-700/40">
+                    <span className="text-white font-bold text-base">Total Amount</span>
+                    <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">
+                        ${totalPrice}
+                    </span>
+                </div>
+            </div>
+
+            {/* Reserve Button */}
             <button
                 type="submit"
-                disabled={loading}
-                className="w-full py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 disabled:bg-blue-400 transition"
+                disabled={loading || status === "loading"}
+                className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-sm rounded-xl shadow-xl shadow-indigo-600/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] flex items-center justify-center gap-2"
             >
-                {loading ? "Processing..." : "Reserve Now"}
+                {loading ? (
+                    <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        Processing...
+                    </>
+                ) : (
+                    <>
+                        <CheckCircle2 className="w-4 h-4" />
+                        Confirm Reservation
+                    </>
+                )}
             </button>
-            {!session && <p className="text-xs text-gray-500 text-center">You must be logged in to book.</p>}
+
+            {/* Security Note */}
+            <div className="flex items-center justify-center gap-2 pt-2 text-xs text-slate-500">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                <span>Secure booking • Instant confirmation • Free cancellation</span>
+            </div>
         </form>
     );
 }

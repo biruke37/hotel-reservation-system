@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     try {
         const [totalRooms, totalUsers, totalBookings, revenue] = await Promise.all([
@@ -8,8 +10,8 @@ export async function GET() {
             prisma.user.count(),
             prisma.booking.count(),
             prisma.booking.aggregate({
-                _sum: { totalPrice: true },
-                where: { status: "Confirmed" }, // ከ schemaህ BookingStatus ጋር exact match ያደርጋል
+                _sum: { amount: true },
+                where: { status: "CONFIRMED" },
             }),
         ]);
 
@@ -27,7 +29,7 @@ export async function GET() {
                 totalRooms,
                 totalUsers,
                 totalBookings,
-                totalRevenue: revenue._sum.totalPrice || 0,
+                totalRevenue: revenue._sum.amount || 0,
             },
             recentBookings,
         });

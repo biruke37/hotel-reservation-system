@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Building2,
     Mail,
@@ -16,12 +16,55 @@ import {
     Sparkles,
 } from "lucide-react";
 
+interface GeneralSettings {
+    hotelName: string;
+    contactEmail: string;
+    phone: string;
+    address: string;
+    currency: string;
+}
+
+interface BookingRules {
+    checkInTime: string;
+    checkOutTime: string;
+    taxRate: string;
+    cancellationPolicy: string;
+    autoConfirm: boolean;
+}
+
+interface NotificationSettings {
+    emailAlerts: boolean;
+    newBookingNotify: boolean;
+    cancellationNotify: boolean;
+    dailyReports: boolean;
+}
+
+interface SettingsData {
+    hotelName: string;
+    contactEmail: string;
+    phone: string;
+    address: string;
+    currency: string;
+    checkInTime: string;
+    checkOutTime: string;
+    taxRate: number;
+    cancellationPolicy: string;
+    autoConfirm: boolean;
+    emailAlerts: boolean;
+    newBookingNotify: boolean;
+    cancellationNotify: boolean;
+    dailyReports: boolean;
+}
+
 export default function AdminSettingsPage() {
     const [activeTab, setActiveTab] = useState<"general" | "booking" | "notifications" | "security">("general");
     const [isSaved, setIsSaved] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     // Form States
-    const [generalSettings, setGeneralSettings] = useState({
+    const [generalSettings, setGeneralSettings] = useState<GeneralSettings>({
         hotelName: "HotelHub Luxury",
         contactEmail: "biru@gmail.com",
         phone: "+251946309932",
@@ -29,26 +72,101 @@ export default function AdminSettingsPage() {
         currency: "ETB",
     });
 
-    const [bookingRules, setBookingRules] = useState({
+    const [bookingRules, setBookingRules] = useState<BookingRules>({
         checkInTime: "14:00",
         checkOutTime: "11:00",
         taxRate: "15",
         cancellationPolicy: "24_hours",
-        autoConfirm: true,
+        autoConfirm: false,
     });
 
-    const [notificationSettings, setNotificationSettings] = useState({
+    const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({
         emailAlerts: true,
         newBookingNotify: true,
         cancellationNotify: true,
         dailyReports: false,
     });
 
-    const handleSave = (e: React.FormEvent) => {
+    // Fetch settings on mount
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch("/api/admin/settings");
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    setGeneralSettings({
+                        hotelName: data.data.hotelName || "HotelHub Luxury",
+                        contactEmail: data.data.contactEmail || "biru@gmail.com",
+                        phone: data.data.phone || "+251946309932",
+                        address: data.data.address || "Desse , Addis Ababa, Woldia",
+                        currency: data.data.currency || "ETB",
+                    });
+                    setBookingRules({
+                        checkInTime: data.data.checkInTime || "14:00",
+                        checkOutTime: data.data.checkOutTime || "11:00",
+                        taxRate: String(data.data.taxRate || 15),
+                        cancellationPolicy: data.data.cancellationPolicy || "24_hours",
+                        autoConfirm: data.data.autoConfirm || false,
+                    });
+                    setNotificationSettings({
+                        emailAlerts: data.data.emailAlerts ?? true,
+                        newBookingNotify: data.data.newBookingNotify ?? true,
+                        cancellationNotify: data.data.cancellationNotify ?? true,
+                        dailyReports: data.data.dailyReports ?? false,
+                    });
+                }
+            } catch (err) {
+                console.error("Fetch settings error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSettings();
+    }, []);
+
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSaved(true);
-        setTimeout(() => setIsSaved(false), 3000);
+        setError(null);
+        setSaving(true);
+
+        try {
+            const response = await fetch("/api/admin/settings", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...generalSettings,
+                    ...bookingRules,
+                    taxRate: Number(bookingRules.taxRate),
+                    ...notificationSettings,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setIsSaved(true);
+                setTimeout(() => setIsSaved(false), 3000);
+            } else {
+                setError(data.message || "Failed to save settings");
+            }
+        } catch (err) {
+            setError("Failed to connect to server");
+            console.error("Save error:", err);
+        } finally {
+            setSaving(false);
+        }
     };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-96">
+                <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6 max-w-5xl">
@@ -63,7 +181,7 @@ export default function AdminSettingsPage() {
                         Hotel Preferences & Settings
                     </h1>
                     <p className="text-xs text-slate-400 mt-1">
-                        all hotel information payment and reervation customer this manage::
+                        Manage hotel information, payment, and reservation settings
                     </p>
                 </div>
 
@@ -71,6 +189,12 @@ export default function AdminSettingsPage() {
                     <div className="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-4 py-2 rounded-xl text-xs font-bold animate-fade-in">
                         <CheckCircle2 className="w-4 h-4" />
                         <span>Saved Successfully!</span>
+                    </div>
+                )}
+                {error && (
+                    <div className="flex items-center gap-2 bg-rose-500/10 text-rose-400 border border-rose-500/20 px-4 py-2 rounded-xl text-xs font-bold">
+                        <ShieldCheck className="w-4 h-4" />
+                        <span>{error}</span>
                     </div>
                 )}
             </div>
@@ -273,7 +397,7 @@ export default function AdminSettingsPage() {
                         <div className="flex items-center justify-between pt-3 border-t border-slate-800/60">
                             <div>
                                 <p className="text-xs font-bold text-white">Instant Booking Auto-Confirm</p>
-                                <p className="text-[11px] text-slate-400">client place take self Confirm ።</p>
+                                <p className="text-[11px] text-slate-400">Automatically confirm bookings without approval</p>
                             </div>
                             <input
                                 type="checkbox"
@@ -298,7 +422,7 @@ export default function AdminSettingsPage() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-xs font-bold text-white">New Booking Email Alerts</p>
-                                    <p className="text-[11px] text-slate-400">new reservation taken Email sent።</p>
+                                    <p className="text-[11px] text-slate-400">Receive email notifications for new reservations</p>
                                 </div>
                                 <input
                                     type="checkbox"
@@ -313,7 +437,7 @@ export default function AdminSettingsPage() {
                             <div className="flex items-center justify-between pt-3 border-t border-slate-800/60">
                                 <div>
                                     <p className="text-xs font-bold text-white">Cancellation Alerts</p>
-                                    <p className="text-[11px] text-slate-400">cancel place notification sent።</p>
+                                    <p className="text-[11px] text-slate-400">Receive email notifications when bookings are cancelled</p>
                                 </div>
                                 <input
                                     type="checkbox"
@@ -359,6 +483,10 @@ export default function AdminSettingsPage() {
                                     />
                                 </div>
                             </div>
+
+                            <p className="text-[10px] text-slate-500 mt-2">
+                                Password changes require re-authentication for security purposes.
+                            </p>
                         </div>
                     </div>
                 )}
@@ -367,10 +495,20 @@ export default function AdminSettingsPage() {
                 <div className="flex items-center justify-end">
                     <button
                         type="submit"
-                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition active:scale-95"
+                        disabled={saving}
+                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white px-6 py-3 rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition active:scale-95"
                     >
-                        <Save className="w-4 h-4" />
-                        <span>Save Settings Changes</span>
+                        {saving ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                <span>Saving...</span>
+                            </>
+                        ) : (
+                            <>
+                                <Save className="w-4 h-4" />
+                                <span>Save Settings Changes</span>
+                            </>
+                        )}
                     </button>
                 </div>
             </form>

@@ -62,10 +62,13 @@ model Booking {
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   roomId    String
   room      Room          @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  checkInDate  DateTime?
+  checkOutDate DateTime?
   hotelName String        @default("Hotel")
   nights    Int           @default(1)
   amount    Float
   status    BookingStatus @default(PENDING_PAYMENT)
+  adminNotes String?
   payment   Payment?
   createdAt DateTime      @default(now())
 }
@@ -80,4 +83,24 @@ model Payment {
   status        PaymentStatus @default(PENDING)
   adminNotes    String?
   createdAt     DateTime      @default(now())
+}
+
+model Setting {
+  id              String    @id @default(cuid())
+  hotelName       String
+  contactEmail    String
+  phone           String?
+  address         String?
+  currency        String    @default("ETB")
+  checkInTime     String    @default("14:00")
+  checkOutTime    String    @default("11:00")
+  taxRate         Float     @default(15)
+  cancellationPolicy String  @default("24_hours")
+  autoConfirm     Boolean   @default(false)
+  emailAlerts     Boolean   @default(true)
+  newBookingNotify Boolean  @default(true)
+  cancellationNotify Boolean @default(true)
+  dailyReports    Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }

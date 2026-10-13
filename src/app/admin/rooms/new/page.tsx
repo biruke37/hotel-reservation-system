@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
 export default function AddRoomPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -12,7 +11,6 @@ export default function AddRoomPage() {
         price: "",
         category: "STANDARD ROOM",
     });
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -25,10 +23,9 @@ export default function AddRoomPage() {
             });
 
             if (!res.ok) throw new Error("Failed to add room");
-
             toast.success("Room added successfully!");
-            router.push("/rooms"); // ተጨማሮ ወደ ሩሞች ዝርዝር ገጽ ይመልሰዋል
-            router.refresh(); // አዲሱ ዴታ ወዲያውኑ እንዲያሳይ ሪፍሬሽ ያደርጋል
+            router.push("/rooms"); 
+            router.refresh(); 
         } catch (error) {
             toast.error("Something went wrong!");
         } finally {

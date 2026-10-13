@@ -58,6 +58,13 @@ export default function AdminRoomsPage() {
         return matchesSearch && matchesStatus;
     });
 
+    // Count by status for summary
+    const statusCounts = {
+        Available: rooms.filter(r => r.status === "Available").length,
+        Occupied: rooms.filter(r => r.status === "Occupied").length,
+        Maintenance: rooms.filter(r => r.status === "Maintenance").length
+    };
+
     // Open Modal for Add
     const handleOpenAdd = () => {
         setEditingRoom(null);
@@ -80,7 +87,7 @@ export default function AdminRoomsPage() {
 
     // Delete Handler
     const handleDelete = (id: string) => {
-        if (confirm("are you sure delete this room?")) {
+        if (confirm("Are you sure you want to delete this room?")) {
             setRooms((prev) => prev.filter((r) => r.id !== id));
         }
     };
@@ -89,12 +96,10 @@ export default function AdminRoomsPage() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (editingRoom) {
-            // Update
             setRooms((prev) =>
                 prev.map((r) => (r.id === editingRoom.id ? { ...r, ...formData } : r))
             );
         } else {
-            // Add
             const newRoomItem: Room = {
                 id: Date.now().toString(),
                 ...formData
@@ -104,27 +109,42 @@ export default function AdminRoomsPage() {
         setIsModalOpen(false);
     };
 
+    // Get status color classes
+    const getStatusColors = (status: string) => {
+        switch (status) {
+            case "Available": return { bg: "bg-emerald-600", badge: "bg-emerald-500/20 text-emerald-400 border-emerald-500/20" };
+            case "Occupied": return { bg: "bg-indigo-600", badge: "bg-indigo-500/20 text-indigo-400 border-indigo-500/20" };
+            case "Maintenance": return { bg: "bg-amber-600", badge: "bg-amber-500/20 text-amber-400 border-amber-500/20" };
+            default: return { bg: "bg-slate-600", badge: "bg-slate-500/20 text-slate-400 border-slate-500/20" };
+        }
+    };
+
     return (
         <div className="space-y-6">
-            {/* Top Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#0d1322] border border-slate-800/80 p-6 rounded-2xl shadow-xl">
-                <div>
-                    <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs mb-1">
-                        <Sparkles className="w-4 h-4" />
-                        <span>Room Management System</span>
-                    </div>
-                    <h1 className="text-xl font-black text-white tracking-wide">Rooms Catalog</h1>
-                    <p className="text-xs text-slate-400 mt-1">
-                       Hotel rooms price፣ new room register and manage።
-                    </p>
+            {/* Page Header Banner */}
+            <div className="bg-[#0d1322] border border-slate-800/80 rounded-2xl p-6">
+                <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs mb-1">
+                    <Sparkles className="w-4 h-4" />
+                    <span>Room Management System</span>
                 </div>
-                <button
-                    onClick={handleOpenAdd}
-                    className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition-all active:scale-95 shrink-0"
-                >
-                    <Plus className="w-4 h-4" />
-                    <span>Add New Room</span>
-                </button>
+                <h1 className="text-xl font-black text-white tracking-wide">Rooms Catalog</h1>
+                <p className="text-xs text-slate-400 mt-1">Hotel rooms, pricing, and status management</p>
+            </div>
+
+            {/* Room Count Summary Bar */}
+            <div className="grid grid-cols-3 gap-3">
+                <div className="bg-[#0d1322] border border-slate-800/80 rounded-xl p-3 flex flex-col items-center justify-center">
+                    <span className="text-2xl font-black text-emerald-400">{statusCounts.Available}</span>
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">Available</span>
+                </div>
+                <div className="bg-[#0d1322] border border-slate-800/80 rounded-xl p-3 flex flex-col items-center justify-center">
+                    <span className="text-2xl font-black text-indigo-400">{statusCounts.Occupied}</span>
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">Occupied</span>
+                </div>
+                <div className="bg-[#0d1322] border border-slate-800/80 rounded-xl p-3 flex flex-col items-center justify-center">
+                    <span className="text-2xl font-black text-amber-400">{statusCounts.Maintenance}</span>
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">Maintenance</span>
+                </div>
             </div>
 
             {/* Filter and Search Bar */}
@@ -136,7 +156,7 @@ export default function AdminRoomsPage() {
                         placeholder="Search room number or type..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition"
+                        className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition"
                     />
                 </div>
 
@@ -146,9 +166,9 @@ export default function AdminRoomsPage() {
                         <button
                             key={st}
                             onClick={() => setStatusFilter(st)}
-                            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${statusFilter === st
-                                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
-                                    : "bg-[#131b2e] text-slate-400 hover:text-white border border-slate-800/80"
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition whitespace-nowrap ${statusFilter === st
+                                ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
+                                : "bg-[#131b2e] text-slate-400 hover:text-white hover:bg-slate-800/50 border border-slate-800/80"
                                 }`}
                         >
                             {st}
@@ -159,175 +179,183 @@ export default function AdminRoomsPage() {
 
             {/* Rooms Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {filteredRooms.map((room) => (
-                    <div
-                        key={room.id}
-                        className="bg-[#0d1322] border border-slate-800/80 hover:border-indigo-500/40 rounded-2xl p-5 flex flex-col justify-between space-y-4 transition-all duration-300 group hover:shadow-xl hover:shadow-indigo-500/5"
-                    >
-                        <div>
-                            {/* Status Header */}
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="p-2.5 bg-indigo-600/10 text-indigo-400 rounded-xl border border-indigo-500/20 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                                    <BedDouble className="w-5 h-5" />
+                {filteredRooms.map((room) => {
+                    const statusColors = getStatusColors(room.status);
+                    return (
+                        <div
+                            key={room.id}
+                            className="bg-[#0d1322] border border-slate-800/80 hover:border-indigo-500/40 rounded-2xl overflow-hidden shadow-lg group hover:shadow-[0_0_30px_-5px_rgba(99,102,241,0.15)] transition-all duration-300"
+                        >
+                            {/* Status Top Strip */}
+                            <div className={`h-1.5 ${statusColors.bg}`} />
+
+                            <div className="p-5 flex flex-col justify-between space-y-4">
+                                <div>
+                                    {/* Status Header */}
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="p-2.5 bg-indigo-600/10 text-indigo-400 rounded-xl border border-indigo-500/20 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-500 transition-all">
+                                            <BedDouble className="w-5 h-5" />
+                                        </div>
+                                        <span
+                                            className={`px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase ${statusColors.badge}`}
+                                        >
+                                            {room.status}
+                                        </span>
+                                    </div>
+
+                                    {/* Room Details */}
+                                    <h3 className="text-lg font-black text-white group-hover:text-indigo-300 transition">
+                                        Room #{room.number}
+                                    </h3>
+                                    <p className="text-xs font-medium text-slate-400 mt-0.5">{room.type}</p>
+                                    <p className="text-[11px] text-slate-500 mt-1">{room.floor}</p>
+
+                                    {/* Mini Icons Features */}
+                                    <div className="flex items-center gap-3 mt-4 pt-3 border-t border-slate-800/60">
+                                        <Wifi className="w-3.5 h-3.5 text-indigo-400/50" />
+                                        <Tv className="w-3.5 h-3.5 text-purple-400/50" />
+                                        <Coffee className="w-3.5 h-3.5 text-amber-400/50" />
+                                    </div>
                                 </div>
-                                <span
-                                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider ${room.status === "Available"
-                                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                                            : room.status === "Occupied"
-                                                ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
-                                                : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                                        }`}
-                                >
-                                    {room.status}
-                                </span>
-                            </div>
 
-                            {/* Room Details */}
-                            <h3 className="text-lg font-black text-white group-hover:text-indigo-300 transition">
-                                Room #{room.number}
-                            </h3>
-                            <p className="text-xs font-medium text-slate-400 mt-0.5">{room.type}</p>
-                            <p className="text-[11px] text-slate-500 mt-1">{room.floor}</p>
-
-                            {/* Mini Icons Features */}
-                            <div className="flex items-center gap-3 mt-4 pt-3 border-t border-slate-800/60 text-slate-500">
-                                <Wifi className="w-3.5 h-3.5" />
-                                <Tv className="w-3.5 h-3.5" />
-                                <Coffee className="w-3.5 h-3.5" />
+                                {/* Bottom Controls */}
+                                <div className="flex items-center justify-between pt-3 border-t border-slate-800/60">
+                                    <div>
+                                        <span className="text-xl font-black text-white">${room.price}</span>
+                                        <span className="text-[10px] text-slate-400">/night</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <button
+                                            onClick={() => handleOpenEdit(room)}
+                                            className="p-2 bg-[#131b2e] hover:bg-indigo-600 hover:text-white text-slate-300 rounded-xl border border-slate-800/80 transition"
+                                            title="Edit Room"
+                                        >
+                                            <Edit2 className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(room.id)}
+                                            className="p-2 bg-[#131b2e] hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 rounded-xl border border-slate-800/80 transition"
+                                            title="Delete Room"
+                                        >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        {/* Bottom Controls */}
-                        <div className="flex items-center justify-between pt-3 border-t border-slate-800/60">
-                            <div>
-                                <span className="text-xl font-black text-white">${room.price}</span>
-                                <span className="text-[10px] text-slate-400">/night</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                                <button
-                                    onClick={() => handleOpenEdit(room)}
-                                    className="p-2 bg-[#131b2e] hover:bg-indigo-600 hover:text-white text-slate-300 rounded-xl border border-slate-800/80 transition"
-                                    title="Edit Room"
-                                >
-                                    <Edit2 className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(room.id)}
-                                    className="p-2 bg-[#131b2e] hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 rounded-xl border border-slate-800/80 transition"
-                                    title="Delete Room"
-                                >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Create / Edit Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-                    <div className="bg-[#0d1322] border border-slate-800/80 rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl">
-                        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-                            <h3 className="text-base font-bold text-white">
-                                {editingRoom ? `Edit Room #${editingRoom.number}` : "Add New Room"}
-                            </h3>
-                            <button
-                                onClick={() => setIsModalOpen(false)}
-                                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
+                    <div className="bg-[#0d1322] border border-slate-800/80 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+                        {/* Modal Header Strip */}
+                        <div className="h-1 bg-gradient-to-r from-indigo-600 to-purple-600" />
 
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="space-y-1">
-                                    <label className="text-xs font-semibold text-slate-300">Room Number</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder="e.g. 102"
-                                        value={formData.number}
-                                        onChange={(e) => setFormData({ ...formData, number: e.target.value })}
-                                        className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
-                                    />
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-semibold text-slate-300">Price ($/night)</label>
-                                    <input
-                                        type="number"
-                                        required
-                                        placeholder="e.g. 200"
-                                        value={formData.price}
-                                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                        className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-1">
-                                <label className="text-xs font-semibold text-slate-300">Room Type</label>
-                                <select
-                                    value={formData.type}
-                                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                                    className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+                        <div className="p-6 space-y-5">
+                            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                                <h3 className="text-base font-bold text-white">
+                                    {editingRoom ? `Edit Room #${editingRoom.number}` : "Add New Room"}
+                                </h3>
+                                <button
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
                                 >
-                                    <option value="Standard King">Standard King</option>
-                                    <option value="Executive Room">Executive Room</option>
-                                    <option value="Deluxe Suite">Deluxe Suite</option>
-                                    <option value="Penthouse Suite">Penthouse Suite</option>
-                                </select>
+                                    <X className="w-5 h-5" />
+                                </button>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="space-y-1">
-                                    <label className="text-xs font-semibold text-slate-300">Floor</label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g. 2nd Floor"
-                                        value={formData.floor}
-                                        onChange={(e) => setFormData({ ...formData, floor: e.target.value })}
-                                        className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
-                                    />
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-semibold text-slate-300">Room Number</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            placeholder="e.g. 102"
+                                            value={formData.number}
+                                            onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+                                            className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-semibold text-slate-300">Price ($/night)</label>
+                                        <input
+                                            type="number"
+                                            required
+                                            placeholder="e.g. 200"
+                                            value={formData.price}
+                                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                            className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-xs font-semibold text-slate-300">Status</label>
+                                    <label className="text-xs font-semibold text-slate-300">Room Type</label>
                                     <select
-                                        value={formData.status}
-                                        onChange={(e) =>
-                                            setFormData({
-                                                ...formData,
-                                                status: e.target.value as "Available" | "Occupied" | "Maintenance",
-                                            })
-                                        }
-                                        className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"
+                                        value={formData.type}
+                                        onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                                        className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition"
                                     >
-                                        <option value="Available">Available</option>
-                                        <option value="Occupied">Occupied</option>
-                                        <option value="Maintenance">Maintenance</option>
+                                        <option value="Standard King">Standard King</option>
+                                        <option value="Executive Room">Executive Room</option>
+                                        <option value="Deluxe Suite">Deluxe Suite</option>
+                                        <option value="Penthouse Suite">Penthouse Suite</option>
                                     </select>
                                 </div>
-                            </div>
 
-                            <div className="pt-3 flex items-center justify-end gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/20 transition flex items-center gap-1.5"
-                                >
-                                    <Check className="w-4 h-4" />
-                                    <span>{editingRoom ? "Save Changes" : "Create Room"}</span>
-                                </button>
-                            </div>
-                        </form>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-semibold text-slate-300">Floor</label>
+                                        <input
+                                            type="text"
+                                            placeholder="e.g. 2nd Floor"
+                                            value={formData.floor}
+                                            onChange={(e) => setFormData({ ...formData, floor: e.target.value })}
+                                            className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-semibold text-slate-300">Status</label>
+                                        <select
+                                            value={formData.status}
+                                            onChange={(e) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    status: e.target.value as "Available" | "Occupied" | "Maintenance",
+                                                })
+                                            }
+                                            className="w-full bg-[#131b2e] border border-slate-800/80 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition"
+                                        >
+                                            <option value="Available">Available</option>
+                                            <option value="Occupied">Occupied</option>
+                                            <option value="Maintenance">Maintenance</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="pt-3 flex items-center justify-end gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsModalOpen(false)}
+                                        className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/20 transition flex items-center gap-1.5"
+                                    >
+                                        <Check className="w-4 h-4" />
+                                        <span>{editingRoom ? "Save Changes" : "Create Room"}</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}

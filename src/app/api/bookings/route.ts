@@ -10,15 +10,21 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Missing required booking or payment details" }, { status: 400 });
         }
 
+        // Calculate nights
+        const checkIn = new Date(checkInDate);
+        const checkOut = new Date(checkOutDate);
+        const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
+
         // 1. ቡኪንጉን በዳታቤዝ ውስጥ Pending በሚል ስቴተስ ማስቀመጥ
         const booking = await prisma.booking.create({
             data: {
                 userId,
                 roomId,
-                checkInDate: new Date(checkInDate),
-                checkOutDate: new Date(checkOutDate),
-                totalPrice: parseFloat(totalPrice),
-                status: "Pending",
+                checkInDate: checkIn,
+                checkOutDate: checkOut,
+                nights: nights > 0 ? nights : 1,
+                amount: parseFloat(totalPrice),
+                status: "PENDING_PAYMENT",
             },
         });
 
@@ -53,10 +59,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: chapaData.message || "Payment initialization failed" }, { status: 400 });
         }
 
-        return NextResponse.json({ 
-            success: true, 
-            booking, 
-            checkout_url: chapaData.data.checkout_url 
+        return NextResponse.json({
+            success: true,
+            booking,
+            checkout_url: chapaData.data.checkout_url
         }, { status: 201 });
 
     } catch (error) {
