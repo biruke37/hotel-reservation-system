@@ -101,6 +101,7 @@ model Setting {
   newBookingNotify Boolean  @default(true)
   cancellationNotify Boolean @default(true)
   dailyReports    Boolean   @default(false)
+  theme           String    @default("dark")
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 }
